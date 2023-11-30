@@ -49,21 +49,21 @@ impl Vec3 {
         }
     }
 
-    pub fn rotateX(&self, n: f32) -> Vec3 {
+    pub fn rotate_x(&self, n: f32) -> Vec3 {
         Vec3 {
             x: self.x,
             y: n.cos()*self.y-n.sin()*self.z,
             z: n.sin()*self.y+n.cos()*self.z,
         }
     }
-    pub fn rotateY(&self, n: f32) -> Vec3 {
+    pub fn rotate_y(&self, n: f32) -> Vec3 {
         Vec3 {
             x: n.cos()*self.x + n.sin()*self.z,
             y: self.y,
             z: -n.sin()*self.x + n.cos()*self.z,
         }
     }
-    pub fn rotateZ(&self, n: f32) -> Vec3 {
+    pub fn rotate_z(&self, n: f32) -> Vec3 {
         Vec3 {
             x: n.cos()*self.x-n.sin()*self.y,
             y: n.sin()*self.x+n.cos()*self.y,
@@ -208,12 +208,12 @@ mod tests {
     }
 
     #[test]
-    fn rotateX() {
+    fn rotate_x() {
         let a = Vec3::new(0.0, 1.0, 0.0);
         let rotation = PI/2.0;
 
         let expected = Vec3::new(0.0, 0.0, 1.0);
 
-        assert_eq!(expected, a.rotateX(rotation));
+        assert_eq!(expected, a.rotate_x(rotation));
     }
 }
