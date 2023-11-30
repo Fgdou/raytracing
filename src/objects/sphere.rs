@@ -26,6 +26,12 @@ impl ObjectRay for Sphere {
 
                 let mut res = scene.launch_ray(Ray{dir: d, pos: point}, bounce);
                 res.distance = distance;
+
+                let reduction = 1.0-0.04;
+                res.rgb.r = (res.rgb.r as f32 * reduction) as u8;
+                res.rgb.g = (res.rgb.g as f32 * reduction) as u8;
+                res.rgb.b = (res.rgb.b as f32 * reduction) as u8;
+                
                 Some(res)
             }
         }
