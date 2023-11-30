@@ -34,8 +34,8 @@ impl Camera {
 
         let z = Vec3::new(0.0, 1.0, 0.0);
 
-        let vy = (z - n*z.dot(n)).normalized();
-        let vx = n.cross(vy).normalized();
+        let vx = n.cross(z).normalized();
+        let vy = n.cross(vx).normalized();
 
         let pos = p + x*vx + y*vy;
         let dir = n.rotate_z(self.rotation_x-self.fov/2.0*y).rotate_y(self.rotation_y-self.fov/2.0*x);
