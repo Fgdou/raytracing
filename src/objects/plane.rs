@@ -1,4 +1,4 @@
-use crate::{vec::Vec3, scene::ObjectRay, ray::Ray, image::RGB};
+use crate::{vec::Vec3, scene::{ObjectRay, RGBD}, ray::Ray, image::RGB};
 
 pub struct Plane {
     pos: Vec3,
@@ -15,9 +15,10 @@ impl Plane{
 }
 
 impl ObjectRay for Plane {
-    fn bonce(&self, ray: &Ray) -> Option<RGB> {
-        let _ = self.intersect(ray)?;
-        Some(self.color.clone())
+    fn bonce(&self, ray: &Ray) -> Option<RGBD> {
+        let point = self.intersect(ray)?;
+        let distance = (point - ray.pos).abs();
+        Some(RGBD{rgb: self.color.clone(), distance})
     }
 
     fn intersect(&self, ray: &Ray) -> Option<Vec3> {

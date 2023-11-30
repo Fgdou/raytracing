@@ -1,4 +1,4 @@
-use crate::{scene::ObjectRay, image::RGB, vec::Vec3, ray::Ray};
+use crate::{scene::{ObjectRay, RGBD}, image::RGB, vec::Vec3, ray::Ray};
 
 pub struct Sphere {
     color: RGB,
@@ -7,10 +7,11 @@ pub struct Sphere {
 }
 
 impl ObjectRay for Sphere {
-    fn bonce(&self, ray: &Ray) -> Option<RGB> {
-        let _ = self.intersect(ray)?;
+    fn bonce(&self, ray: &Ray) -> Option<RGBD> {
+        let point = self.intersect(ray)?;
+        let distance = (point - ray.pos).abs();
 
-        Some(self.color.clone())
+        Some(RGBD{rgb: self.color.clone(), distance})
 
     }
     fn intersect(&self, ray: &Ray) -> Option<Vec3> {

@@ -15,7 +15,7 @@ impl Camera {
     pub fn new(width: i32, height: i32) -> Self {
         assert!(width > 0 && height > 0, "Width and height whould be > 0 but are ({} {})", width, height);
         Camera {
-            height, width, fov: PI/2.0,
+            height, width, fov: PI*0.7,
             pos: Vec3::zero(),
             rotation_x: 0.0,
             rotation_y: 0.0,

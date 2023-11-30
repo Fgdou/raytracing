@@ -3,8 +3,13 @@ use rand::random;
 
 use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, vec::Vec3};
 
+pub struct RGBD {
+    pub rgb: RGB,
+    pub distance: f32
+}
+
 pub trait ObjectRay {
-    fn bonce(&self, ray: &Ray) -> Option<RGB>;
+    fn bonce(&self, ray: &Ray) -> Option<RGBD>;
     fn intersect(&self, ray: &Ray) -> Option<Vec3>;
 }
 
@@ -29,14 +34,15 @@ impl Scene {
         self.objects.push(obj);
     }
 
-    fn search_color(&self, ray: Ray) -> RGB {
-        let mut color = RGB::default();
+    fn search_color(&self, ray: Ray) -> RGBD {
+        let mut color = RGBD{rgb: RGB::default(), distance: f32::INFINITY};
 
         for object in &self.objects {
             match object.bonce(&ray){
                 Some(c) => {
-                    color = c;
-                    break;
+                    if c.distance < color.distance {
+                        color = c;
+                    }
                 },
                 _ => ()
             }
@@ -55,8 +61,8 @@ impl Scene {
 
                 bar.inc(1);
 
-                let mut colors: Vec<RGB> = Vec::new();
-                for i in 0..100 {
+                let mut colors: Vec<RGBD> = Vec::new();
+                for _ in 0..10 {
                     let ray = self.camera.get_ray(x, y);
 
                     let delta = 0.03;
@@ -74,9 +80,9 @@ impl Scene {
                 let mut b: i32 = 0;
 
                 for c in &colors {
-                    r += c.r as i32;
-                    g += c.g as i32;
-                    b += c.b as i32;
+                    r += c.rgb.r as i32;
+                    g += c.rgb.g as i32;
+                    b += c.rgb.b as i32;
                 }
 
                 image.set_pixel(x as usize, y as usize, RGB{

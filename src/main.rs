@@ -35,9 +35,14 @@ fn main() {
     let mut scene = Scene::new(size as i32, size as i32);
     scene.get_camera().pos.y = 10.0;
 
-    for _ in 0..10 {
-        scene.add_object(Box::from(create_ball_rand()));
-    }
+    // for _ in 0..10 {
+    //     scene.add_object(Box::from(create_ball_rand()));
+    // }
+    scene.add_object(Box::from(Sphere::new(
+        RGB::new(255, 0, 0),
+        1.0,
+        Vec3::new(10.0, 10.0, 0.0)
+    )));
     scene.add_object(Box::from(Plane::new(
         Vec3::zero(),
         Vec3::new(0.0, 1.0, 0.0),

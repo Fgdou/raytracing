@@ -31,7 +31,7 @@ impl Vec3 {
         self.abs2().sqrt()
     }
     pub fn normalized(&self) -> Vec3 {
-        let d = self.abs2();
+        let d = self.abs();
         Vec3 {
             x: self.x / d,
             y: self.y / d,
