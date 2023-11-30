@@ -25,9 +25,11 @@ fn main() {
 
     for i in 0..5 {
         for j in 0..5 {
-            let size = if i == 2 && j == 2 {10.0} else {3.0};
+            let condition = i == 2 && j == 2 || i == 0 && j == 3;
 
-            let material = if i == 2 && j == 2 {
+            let size = if condition {3.0} else {3.0};
+
+            let material = if condition {
                 Material::Mirror
             } else {
                 Material::Color(RGB{
