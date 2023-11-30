@@ -2,11 +2,21 @@ use std::ops::{Add, Sub, Mul, Div, Index, IndexMut};
 
 use crate::mat3::Mat3;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,
     pub z: f32
+}
+
+impl PartialEq for Vec3 {
+    fn eq(&self, other: &Self) -> bool {
+        let epsilon = 1e-6;
+
+        (self.x-other.x).abs() < epsilon && 
+        (self.y-other.y).abs() < epsilon && 
+        (self.z-other.z).abs() < epsilon
+    }
 }
 
 impl Vec3 {
