@@ -40,6 +40,16 @@ impl Vec3 {
             z: self.z / d,
         }
     }
+    pub fn dot(&self, other: Vec3) -> f32 {
+        self.x*other.x + self.y*other.y + self.z*other.z
+    }
+    pub fn cross(&self, other: Vec3) -> Vec3 {
+        Self {
+            x: self.y*other.z-self.z*other.y,
+            y: self.z*other.x-self.x*other.z,
+            z: self.x*other.y-self.y*other.z,
+        }
+    }
 }
 impl From<f32> for Vec3 {
     fn from(value: f32) -> Self {
@@ -105,6 +115,18 @@ impl Mul<f32> for Vec3 {
         }
     }
 }
+impl Mul<Vec3> for f32 {
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Self::Output {
+        Vec3 {
+            x: self * v.x,
+            y: self * v.y,
+            z: self * v.z,
+        }
+    }
+}
+
 
 impl Div<f32> for Vec3 {
     type Output = Vec3;
