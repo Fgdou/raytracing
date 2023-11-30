@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub, Mul, Div, Index, IndexMut};
+use std::ops::{Add, Sub, Mul, Div, Index, IndexMut, Neg};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
@@ -14,6 +14,18 @@ impl PartialEq for Vec3 {
         (self.x-other.x).abs() < epsilon && 
         (self.y-other.y).abs() < epsilon && 
         (self.z-other.z).abs() < epsilon
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
     }
 }
 

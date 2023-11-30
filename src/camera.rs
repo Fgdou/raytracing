@@ -1,4 +1,4 @@
-use std::{f32::consts::PI};
+use std::f32::consts::PI;
 
 use crate::{vec::Vec3, ray::Ray};
 
@@ -10,6 +10,7 @@ pub struct Camera {
     pub width: i32,
     pub fov: f32,
     pub antialiasing: i32,
+    pub max_bound: i32
 }
 
 impl Camera {
@@ -20,7 +21,8 @@ impl Camera {
             pos: Vec3::zero(),
             rotation_x: 0.0,
             rotation_y: 0.0,
-            antialiasing: 5
+            antialiasing: 5,
+            max_bound: 5,
         }
     }
     pub fn get_ray(&self, x: f32, y: f32) -> Ray {
@@ -39,7 +41,7 @@ impl Camera {
         let dir = n.rotate_z(self.rotation_x-self.fov/2.0*y).rotate_y(self.rotation_y-self.fov/2.0*x);
 
         Ray {
-            dir,
+            dir: dir,
             pos
         }
     }

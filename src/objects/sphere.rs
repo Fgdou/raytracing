@@ -1,18 +1,34 @@
-use crate::{scene::{ObjectRay, RGBD}, image::RGB, vec::Vec3, ray::Ray};
+use crate::{scene::{ObjectRay, RGBD, Material, Scene}, vec::Vec3, ray::Ray, image::RGB};
 
 pub struct Sphere {
-    color: RGB,
+    material: Material,
     size: f32,
     pos: Vec3,
 }
 
 impl ObjectRay for Sphere {
-    fn bonce(&self, ray: &Ray) -> Option<RGBD> {
+    fn bonce(&self, ray: &Ray, scene: &Scene, bounce: i32) -> Option<RGBD> {
         let point = self.intersect(ray)?;
         let distance = (point - ray.pos).abs();
+        let normal = (point - self.pos).normalized();
 
-        Some(RGBD{rgb: self.color.clone(), distance})
+        match &self.material {
+            Material::Color(c) => Some(RGBD{rgb: RGB{
+                r: (normal.x*255.0) as u8,
+                g: (normal.y*255.0) as u8,
+                b: (normal.z*255.0) as u8,
+            }, distance}),
+            Material::Mirror => {
+                let a = ray.pos - point;
+                let b = (a.dot(normal)) * normal;
+                let c = b-a;
+                let d = (b+c).normalized();
 
+                let mut res = scene.launch_ray(Ray{dir: d, pos: point}, bounce);
+                res.distance = distance;
+                Some(res)
+            }
+        }
     }
     fn intersect(&self, ray: &Ray) -> Option<Vec3> {
         // https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
@@ -39,9 +55,9 @@ impl ObjectRay for Sphere {
 }
 
 impl Sphere {
-    pub fn new(color: RGB, size: f32, pos: Vec3) -> Self {
+    pub fn new(material: Material, size: f32, pos: Vec3) -> Self {
         Self {
-            color, size, pos
+            material, size, pos
         }
     }
 }

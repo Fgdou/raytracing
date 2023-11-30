@@ -9,7 +9,7 @@ mod scene;
 
 use image::{Image, ImageType, RGB};
 use objects::{sphere::Sphere, plane::Plane};
-use scene::Scene;
+use scene::{Scene, Material};
 use vec::Vec3;
 
 fn main() {
@@ -17,18 +17,25 @@ fn main() {
     let mut image = Image::new(size, size);
 
     let mut scene = Scene::new(size as i32, size as i32);
-    scene.get_camera().pos = Vec3::new(-70.0, 30.0, 70.0);
+    scene.get_camera().pos = Vec3::new(-50.0, 20.0, 50.0);
     scene.get_camera().rotation_x = -0.1;
     scene.get_camera().rotation_y = 0.25;
 
     for i in 0..5 {
         for j in 0..5 {
-            let size = 3.0;
-            scene.add_object(Box::from(Sphere::new(RGB{
+            let size = if i == 2 && j == 2 {10.0} else {3.0};
+
+            let material = if i == 2 && j == 2 {
+                Material::Mirror
+            } else {
+                Material::Color(RGB{
                     r: (i*255/5) as u8,
                     g: (j*255/5) as u8,
                     b: ((i+j)*255/10) as u8,
-                }, 
+                })
+            };
+
+            scene.add_object(Box::from(Sphere::new(material, 
                 size, 
                 Vec3::new(
                     i as f32/5.0*100.0 + 30.0,

@@ -3,13 +3,18 @@ use rand::random;
 
 use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, vec::Vec3};
 
+pub enum Material {
+    Color(RGB),
+    Mirror,
+}
+
 pub struct RGBD {
     pub rgb: RGB,
     pub distance: f32
 }
 
 pub trait ObjectRay {
-    fn bonce(&self, ray: &Ray) -> Option<RGBD>;
+    fn bonce(&self, ray: &Ray, scene: &Scene, bounce: i32) -> Option<RGBD>;
     fn intersect(&self, ray: &Ray) -> Option<Vec3>;
 }
 
@@ -34,11 +39,14 @@ impl Scene {
         self.objects.push(obj);
     }
 
-    fn search_color(&self, ray: Ray) -> RGBD {
+    pub fn launch_ray(&self, ray: Ray, n: i32) -> RGBD {
         let mut color = RGBD{rgb: RGB::default(), distance: f32::INFINITY};
+        if n >= self.camera.max_bound {
+            return color;
+        }
 
         for object in &self.objects {
-            match object.bonce(&ray){
+            match object.bonce(&ray, self, n+1){
                 Some(c) => {
                     if c.distance < color.distance {
                         color = c;
@@ -72,7 +80,7 @@ impl Scene {
                         dir: ray.dir
                     };
 
-                    colors.push(self.search_color(ray));
+                    colors.push(self.launch_ray(ray, 0));
                 }
 
                 let mut r: i32 = 0;
