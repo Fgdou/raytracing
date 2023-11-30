@@ -62,7 +62,7 @@ impl Scene {
                 bar.inc(1);
 
                 let mut colors: Vec<RGBD> = Vec::new();
-                for _ in 0..10 {
+                for _ in 0..self.camera.antialiasing {
                     let ray = self.camera.get_ray(x, y);
 
                     let delta = 0.03;
