@@ -41,7 +41,7 @@ impl ObjectRay for Sphere {
         let distance = o-c;
         let delta = u.dot(distance).powi(2) - (distance.abs2()-r*r);
 
-        if delta < 0.0 {
+        if delta <= 0.0 {
             None
         } else {
             let d = -(u.dot(distance));

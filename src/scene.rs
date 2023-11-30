@@ -48,7 +48,7 @@ impl Scene {
         for object in &self.objects {
             match object.bonce(&ray, self, n+1){
                 Some(c) => {
-                    if c.distance < color.distance {
+                    if c.distance > 0.1 && c.distance < color.distance {
                         color = c;
                     }
                 },
@@ -73,7 +73,7 @@ impl Scene {
                 for _ in 0..self.camera.antialiasing {
                     let ray = self.camera.get_ray(x, y);
 
-                    let delta = 0.03;
+                    let delta = 0.1;
 
                     let ray = Ray{
                         pos: ray.pos + Vec3::new(random::<f32>()*delta, random::<f32>()*delta, random::<f32>()*delta),
