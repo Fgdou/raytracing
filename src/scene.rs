@@ -1,4 +1,5 @@
 use indicatif::ProgressBar;
+use rand::random;
 
 use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, vec::Vec3};
 
@@ -28,28 +29,61 @@ impl Scene {
         self.objects.push(obj);
     }
 
+    fn search_color(&self, ray: Ray) -> RGB {
+        let mut color = RGB::default();
+
+        for object in &self.objects {
+            match object.bonce(&ray){
+                Some(c) => {
+                    color = c;
+                    break;
+                },
+                _ => ()
+            }
+        }
+
+        color
+    }
+
     pub fn draw(&self, image: &mut Image) {
         let bar = ProgressBar::new((self.camera.height*self.camera.width) as u64);
 
         for y in 0..self.camera.height {
             for x in 0..self.camera.width {
+                let x = x as f32;
+                let y = y as f32;
+
                 bar.inc(1);
 
-                let ray = self.camera.get_ray(x, y);
+                let mut colors: Vec<RGB> = Vec::new();
+                for i in 0..100 {
+                    let ray = self.camera.get_ray(x, y);
 
-                let mut color = RGB::default();
+                    let delta = 0.03;
 
-                for object in &self.objects {
-                    match object.bonce(&ray){
-                        Some(c) => {
-                            color = c;
-                            break;
-                        },
-                        _ => ()
-                    }
+                    let ray = Ray{
+                        pos: ray.pos + Vec3::new(random::<f32>()*delta, random::<f32>()*delta, random::<f32>()*delta),
+                        dir: ray.dir
+                    };
+
+                    colors.push(self.search_color(ray));
                 }
 
-                image.set_pixel(x as usize, y as usize, color);
+                let mut r: i32 = 0;
+                let mut g: i32 = 0;
+                let mut b: i32 = 0;
+
+                for c in &colors {
+                    r += c.r as i32;
+                    g += c.g as i32;
+                    b += c.b as i32;
+                }
+
+                image.set_pixel(x as usize, y as usize, RGB{
+                    r: (r/colors.len() as i32) as u8,
+                    g: (g/colors.len() as i32) as u8,
+                    b: (b/colors.len() as i32) as u8,
+                });
             }
         }
         bar.finish();

@@ -21,9 +21,9 @@ impl Camera {
             rotation_y: 0.0,
         }
     }
-    pub fn get_ray(&self, x: i32, y: i32) -> Ray {
-        let x = x as f32/self.width as f32 - 0.5;
-        let y = y as f32/self.height as f32 - 0.5;
+    pub fn get_ray(&self, x: f32, y: f32) -> Ray {
+        let x = x/self.width as f32 - 0.5;
+        let y = y/self.height as f32 - 0.5;
 
         let n = Vec3::new(1.0, 0.0, 0.0).rotate_z(self.rotation_x).rotate_y(self.rotation_y);
         let p = self.pos;
@@ -57,7 +57,7 @@ mod tests {
             for j in 0..100 {
                 let expected = Vec3::new(0.0, -0.5 + i as f32/100.0, -0.5 + j as f32/100.0);
         
-                assert_eq!(expected, camera.get_ray(j, i).pos, "{} {}", i, j);
+                assert_eq!(expected, camera.get_ray(j as f32, i as f32).pos, "{} {}", i, j);
             }
         }
     }

@@ -8,11 +8,7 @@ pub struct Sphere {
 
 impl ObjectRay for Sphere {
     fn bonce(&self, ray: &Ray) -> Option<RGB> {
-        let point = self.intersect(ray)?;
-
-        let normal = point - self.pos;
-
-        let parralel = -normal.dot(ray.dir);
+        let _ = self.intersect(ray)?;
 
         Some(self.color.clone())
 
