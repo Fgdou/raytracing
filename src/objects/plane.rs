@@ -28,9 +28,9 @@ impl ObjectRay for Plane {
         let l0 = ray.pos;
         let l = ray.dir;
 
-        let denom = l.dot(n);
+        let denom = -l.dot(n);
 
-        if denom >= 0.0 {
+        if denom <= 0.0 {
             None
         } else {
             let d = (p0-l0).dot(n)/denom;
