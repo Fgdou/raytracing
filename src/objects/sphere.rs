@@ -8,14 +8,15 @@ pub struct Sphere {
 
 impl ObjectRay for Sphere {
     fn bonce(&self, ray: &Ray) -> Option<RGB> {
-        match self.intersect(ray) {
-            Some(_) => Some(self.color.clone()),
-            None => None
-        }
-    }
-}
+        let point = self.intersect(ray)?;
 
-impl Sphere {
+        let normal = point - self.pos;
+
+        let parralel = -normal.dot(ray.dir);
+
+        Some(self.color.clone())
+
+    }
     fn intersect(&self, ray: &Ray) -> Option<Vec3> {
         // https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
 
@@ -29,12 +30,18 @@ impl Sphere {
 
         if delta < 0.0 {
             None
-        } else if delta == 0.0 {
-            Some(o + -(u.dot(distance))*u)
         } else {
-            Some(o + (-(u.dot(distance))-delta)*u)
+            let d = -(u.dot(distance));
+            if delta == 0.0 {
+                Some(o + d*u)
+            } else {
+                Some(o + (d-delta.sqrt())*u)
+            }
         }
     }
+}
+
+impl Sphere {
     pub fn new(color: RGB, size: f32, pos: Vec3) -> Self {
         Self {
             color, size, pos

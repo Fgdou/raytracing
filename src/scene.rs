@@ -1,9 +1,10 @@
 use indicatif::ProgressBar;
 
-use crate::{camera::Camera, image::{Image, RGB}, ray::Ray};
+use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, vec::Vec3};
 
 pub trait ObjectRay {
     fn bonce(&self, ray: &Ray) -> Option<RGB>;
+    fn intersect(&self, ray: &Ray) -> Option<Vec3>;
 }
 
 pub struct Scene {
@@ -40,7 +41,10 @@ impl Scene {
 
                 for object in &self.objects {
                     match object.bonce(&ray){
-                        Some(c) => color = c,
+                        Some(c) => {
+                            color = c;
+                            break;
+                        },
                         _ => ()
                     }
                 }
