@@ -11,10 +11,6 @@ impl ObjectRay for Sphere {
         let distance = self.pos - ray.pos;
         let point = ray.dir.dot(distance) * ray.dir;
 
-        let normal = (point - self.pos).normalized();
-
-        let factor = 1.0+normal.dot(ray.dir);
-
         let distance = (point - self.pos).abs();
         if distance > self.size {
             None
