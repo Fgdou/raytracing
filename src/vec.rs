@@ -1,4 +1,6 @@
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Sub, Mul, Div, Index, IndexMut};
+
+use crate::mat3::Mat3;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
@@ -32,6 +34,29 @@ impl Vec3 {
 impl From<f32> for Vec3 {
     fn from(value: f32) -> Self {
         Self{x: value, y: value, z: value}
+    }
+}
+
+impl Index<usize> for Vec3 {
+    type Output = f32;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("index should be between 0 and 2")
+        }
+    }
+}
+impl IndexMut<usize> for Vec3 {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("index should be between 0 and 2")
+        }
     }
 }
 
@@ -83,6 +108,38 @@ impl Div<f32> for Vec3 {
     }
 }
 
+impl Mul<Mat3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, m: Mat3) -> Self::Output {
+        let mut result = Vec3::zero();
+
+        for col in 0..3 {
+            for lign in 0..3 {
+                result[col] += m[lign][col] * self[lign];
+            }
+        }
+
+        result
+    }
+}
+
+impl Mul<Vec3> for Mat3 {
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Self::Output {
+        let mut result = Vec3::zero();
+
+        for lign in 0..3 {
+            for col in 0..3 {
+                result[lign] += self[lign][col] * v[col];
+            }
+        }
+
+        result
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -95,6 +152,7 @@ mod tests {
         let expected = Vec3::new(9.0, 10.0, 11.0);
 
         assert_eq!(expected, a + b);
+        assert_eq!(expected, b + a);
     }
 
     #[test]
@@ -125,5 +183,20 @@ mod tests {
         let expected = Vec3::new(1.0*8.0, 2.0*8.0, 3.0*8.0);
 
         assert_eq!(expected, a * b);
+    }
+
+    #[test]
+    fn mul_mat() {
+        let a = Vec3::new(1.0, 2.0, 3.0);
+        let b = Mat3::new([
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0],
+            [10.0, 11.0, 12.0],
+        ]);
+        let expected1 = Vec3::new(48.0, 54.0, 60.0);
+        let expected2 = Vec3::new(32.0, 50.0, 68.0);
+
+        assert_eq!(expected1, a*b);
+        assert_eq!(expected2, b*a);
     }
 }

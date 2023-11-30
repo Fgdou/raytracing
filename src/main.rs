@@ -1,5 +1,8 @@
 mod image;
 mod vec;
+mod camera;
+mod ray;
+mod mat3;
 use image::{Image, RGB, ImageType};
 
 
