@@ -1,4 +1,4 @@
-use std::{ops::{IndexMut, Index, Mul}, arch::x86_64::_CMP_ORD_S};
+use std::ops::{IndexMut, Index, Mul};
 
 use crate::vec::Vec3;
 
