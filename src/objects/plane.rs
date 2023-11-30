@@ -16,14 +16,8 @@ impl Plane{
 
 impl ObjectRay for Plane {
     fn bonce(&self, ray: &Ray) -> Option<RGB> {
-        let point = self.intersect(ray)?;
-        let distance = (point-ray.pos).abs2();
-        let factor = 1000000.0/distance;
-        Some(RGB{
-            r: ((self.color.r as f32)*factor) as u8,
-            g: ((self.color.g as f32)*factor) as u8,
-            b: ((self.color.b as f32)*factor) as u8,
-        })
+        let _ = self.intersect(ray)?;
+        Some(self.color.clone())
     }
 
     fn intersect(&self, ray: &Ray) -> Option<Vec3> {
