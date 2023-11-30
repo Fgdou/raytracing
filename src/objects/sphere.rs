@@ -45,7 +45,9 @@ impl ObjectRay for Sphere {
             None
         } else {
             let d = -(u.dot(distance));
-            if delta == 0.0 {
+            if d < 0.0 {
+                None
+            } else if delta == 0.0 {
                 Some(o + d*u)
             } else {
                 Some(o + (d-delta.sqrt())*u)
