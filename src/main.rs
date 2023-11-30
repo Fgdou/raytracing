@@ -1,4 +1,5 @@
 mod image;
+mod vec;
 use image::{Image, RGB, ImageType};
 
 
