@@ -1,7 +1,5 @@
 use std::ops::{Add, Sub, Mul, Div, Index, IndexMut};
 
-use crate::mat3::Mat3;
-
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
     pub x: f32,
@@ -30,7 +28,7 @@ impl Vec3 {
         self.x*self.x + self.y*self.y + self.z*self.z
     }
     pub fn abs(&self) -> f32 {
-        f32::sqrt(self.abs2())
+        self.abs2().sqrt()
     }
     pub fn normalized(&self) -> Vec3 {
         let d = self.abs2();
@@ -48,6 +46,28 @@ impl Vec3 {
             x: self.y*other.z-self.z*other.y,
             y: self.z*other.x-self.x*other.z,
             z: self.x*other.y-self.y*other.z,
+        }
+    }
+
+    pub fn rotateX(&self, n: f32) -> Vec3 {
+        Vec3 {
+            x: self.x,
+            y: n.cos()*self.y-n.sin()*self.z,
+            z: n.sin()*self.y+n.cos()*self.z,
+        }
+    }
+    pub fn rotateY(&self, n: f32) -> Vec3 {
+        Vec3 {
+            x: n.cos()*self.x + n.sin()*self.z,
+            y: self.y,
+            z: -n.sin()*self.x + n.cos()*self.z,
+        }
+    }
+    pub fn rotateZ(&self, n: f32) -> Vec3 {
+        Vec3 {
+            x: n.cos()*self.x-n.sin()*self.y,
+            y: n.sin()*self.x+n.cos()*self.y,
+            z: self.z,
         }
     }
 }
@@ -140,40 +160,10 @@ impl Div<f32> for Vec3 {
     }
 }
 
-impl Mul<Mat3> for Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, m: Mat3) -> Self::Output {
-        let mut result = Vec3::zero();
-
-        for col in 0..3 {
-            for lign in 0..3 {
-                result[col] += m[lign][col] * self[lign];
-            }
-        }
-
-        result
-    }
-}
-
-impl Mul<Vec3> for Mat3 {
-    type Output = Vec3;
-
-    fn mul(self, v: Vec3) -> Self::Output {
-        let mut result = Vec3::zero();
-
-        for lign in 0..3 {
-            for col in 0..3 {
-                result[lign] += self[lign][col] * v[col];
-            }
-        }
-
-        result
-    }
-}
-
 #[cfg(test)]
 mod tests {
+    use std::f32::consts::PI;
+
     use super::*;
 
     #[test]
@@ -218,17 +208,12 @@ mod tests {
     }
 
     #[test]
-    fn mul_mat() {
-        let a = Vec3::new(1.0, 2.0, 3.0);
-        let b = Mat3::new([
-            [4.0, 5.0, 6.0],
-            [7.0, 8.0, 9.0],
-            [10.0, 11.0, 12.0],
-        ]);
-        let expected1 = Vec3::new(48.0, 54.0, 60.0);
-        let expected2 = Vec3::new(32.0, 50.0, 68.0);
+    fn rotateX() {
+        let a = Vec3::new(0.0, 1.0, 0.0);
+        let rotation = PI/2.0;
 
-        assert_eq!(expected1, a*b);
-        assert_eq!(expected2, b*a);
+        let expected = Vec3::new(0.0, 0.0, 1.0);
+
+        assert_eq!(expected, a.rotateX(rotation));
     }
 }

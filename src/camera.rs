@@ -1,31 +1,32 @@
+use std::{f32::consts::PI, process::exit};
+
 use crate::{vec::Vec3, ray::Ray};
 
 pub struct Camera {
-    ray: Ray,
-    height: i32,
-    width: i32,
+    pub pos: Vec3,
+    pub rotationY: f32,
+    pub rotationX: f32,
+    pub height: i32,
+    pub width: i32,
+    pub fov: f32,
 }
 
 impl Camera {
     pub fn new(width: i32, height: i32) -> Self {
         assert!(width > 0 && height > 0, "Width and height whould be > 0 but are ({} {})", width, height);
         Camera {
-            ray: Ray{pos: Vec3::zero(), dir: Vec3::from(1.0).normalized()}, 
-            height, width
+            height, width, fov: PI/2.0,
+            pos: Vec3::zero(),
+            rotationX: 0.0,
+            rotationY: 0.0,
         }
-    }
-    pub fn set_pos(&mut self, pos: Vec3) {
-        self.ray.pos = pos;
-    }
-    pub fn set_dir(&mut self, dir: &Vec3) {
-        self.ray.dir = dir.normalized();
     }
     pub fn get_ray(&self, x: i32, y: i32) -> Ray {
         let x = x as f32/self.width as f32 - 0.5;
         let y = y as f32/self.height as f32 - 0.5;
 
-        let n = self.ray.dir;
-        let p = self.ray.pos;
+        let n = Vec3::new(1.0, 0.0, 0.0).rotateZ(self.rotationX).rotateY(self.rotationY);
+        let p = self.pos;
 
         let z = Vec3::new(0.0, 1.0, 0.0);
 
@@ -33,9 +34,10 @@ impl Camera {
         let vx = n.cross(vy).normalized();
 
         let pos = p + x*vx + y*vy;
+        let dir = n.rotateZ(self.rotationX-self.fov/2.0*y).rotateY(self.rotationY-self.fov/2.0*x);
 
         Ray {
-            dir: n,
+            dir,
             pos
         }
     }
@@ -43,15 +45,13 @@ impl Camera {
 
 #[cfg(test)]
 mod tests {
-    use crate::vec::Vec3;
+    use crate::{vec::Vec3, ray::Ray};
 
     use super::Camera;
 
     #[test]
     fn camera_default() {
         let mut camera = Camera::new(100, 100);
-        let dir = Vec3::new(1.0, 0.0, 0.0);
-        camera.set_dir(&dir);
 
         for i in 0..100{
             for j in 0..100 {
