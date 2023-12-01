@@ -1,8 +1,10 @@
-use crate::{scene::ObjectRay, ray::Ray, materials::Material, vec::Vec3};
+use cgmath::{Vector3, InnerSpace};
+
+use crate::{scene::ObjectRay, ray::Ray, materials::Material};
 
 pub struct Sphere {
     size: f32,
-    pos: Vec3,
+    pos: Vector3<f32>,
     material: Box<dyn Material>,
 }
 
@@ -16,7 +18,7 @@ impl ObjectRay for Sphere {
         let u = ray.dir;
 
         let distance = o-c;
-        let delta = u.dot(distance).powi(2) - (distance.abs2()-r*r);
+        let delta = u.dot(distance).powi(2) - (distance.magnitude2()-r*r);
 
         if delta <= 0.0 {
             None
@@ -29,7 +31,7 @@ impl ObjectRay for Sphere {
             } else {
                 Some(o + (d-delta.sqrt())*u)
             }?;
-            let normal = (point-self.pos).normalized();
+            let normal = (point-self.pos).normalize();
 
             Some(Ray {
                 pos: point,
@@ -44,7 +46,7 @@ impl ObjectRay for Sphere {
 }
 
 impl Sphere {
-    pub fn new(size: f32, pos: Vec3, material: Box<dyn Material>) -> Self {
+    pub fn new(size: f32, pos: Vector3<f32>, material: Box<dyn Material>) -> Self {
         Self {
             size, pos, material
         }

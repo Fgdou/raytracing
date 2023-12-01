@@ -1,7 +1,7 @@
+use cgmath::InnerSpace;
 use indicatif::ProgressBar;
-use rand::random;
 
-use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, vec::Vec3, materials::Material};
+use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, materials::Material};
 
 pub struct RGBD {
     pub rgb: RGB,
@@ -45,10 +45,10 @@ impl Scene {
                 Some(c) => {
                     let rgb = object.get_material().get_color(&ray, &c, self, n+1);
 
-                    let distance = (ray.pos - c.pos).abs2();
+                    let distance = (ray.pos - c.pos).magnitude();
                     let dir = ray.dir.dot(c.dir);
 
-                    if dir < 0.0 && distance > 0.1 && distance < color.distance {
+                    if dir < 0.0 && distance > 0.01 && distance < color.distance {
                         color = RGBD{rgb: rgb, distance: distance};
                     }
                 },
@@ -69,35 +69,11 @@ impl Scene {
 
                 bar.inc(1);
 
-                let mut colors: Vec<RGBD> = Vec::new();
-                for _ in 0..self.camera.antialiasing {
-                    let ray = self.camera.get_ray(x, y);
+                let ray = self.camera.get_ray(x, y);
 
-                    let delta = 0.02;
+                let color = self.launch_ray(ray, 0);
 
-                    let ray = Ray{
-                        pos: ray.pos + Vec3::new(random::<f32>()*delta, random::<f32>()*delta, random::<f32>()*delta),
-                        dir: ray.dir
-                    };
-
-                    colors.push(self.launch_ray(ray, 0));
-                }
-
-                let mut r: i32 = 0;
-                let mut g: i32 = 0;
-                let mut b: i32 = 0;
-
-                for c in &colors {
-                    r += c.rgb.r as i32;
-                    g += c.rgb.g as i32;
-                    b += c.rgb.b as i32;
-                }
-
-                image.set_pixel(x as usize, y as usize, RGB{
-                    r: (r/colors.len() as i32) as u8,
-                    g: (g/colors.len() as i32) as u8,
-                    b: (b/colors.len() as i32) as u8,
-                });
+                image.set_pixel(x as usize, y as usize, color.rgb);
             }
         }
         bar.finish();

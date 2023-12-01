@@ -1,3 +1,5 @@
+use cgmath::InnerSpace;
+
 use crate::{ray::Ray, scene::Scene, image::RGB};
 
 use super::Material;
@@ -9,12 +11,12 @@ impl Material for Mirror {
         let point = normal.pos;
         let normal = normal.dir;
 
-        let distance = (point - ray.pos).abs();
+        let distance = (point - ray.pos).magnitude();
 
         let a = ray.pos - point;
         let b = (a.dot(normal)) * normal;
         let c = b-a;
-        let d = (b+c).normalized();
+        let d = (b+c).normalize();
 
         let mut res = scene.launch_ray(Ray{dir: d, pos: point}, bounce);
         res.distance = distance;

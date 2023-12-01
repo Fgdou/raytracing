@@ -1,15 +1,17 @@
-use crate::{vec::Vec3, scene::ObjectRay, ray::Ray, materials::Material};
+use cgmath::{InnerSpace, Vector3};
+
+use crate::{scene::ObjectRay, ray::Ray, materials::Material};
 
 pub struct Plane {
-    pos: Vec3,
-    dir: Vec3,
+    pos: Vector3<f32>,
+    dir: Vector3<f32>,
     material: Box<dyn Material>
 }
 
 impl Plane{
-    pub fn new(pos: Vec3, dir: Vec3, material: Box<dyn Material>) -> Self {
+    pub fn new(pos: Vector3<f32>, dir: Vector3<f32>, material: Box<dyn Material>) -> Self {
         Self {
-            pos, dir: dir.normalized(), material
+            pos, dir: dir.normalize(), material
         }
     }
 }

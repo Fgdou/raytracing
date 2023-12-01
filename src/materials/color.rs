@@ -8,7 +8,7 @@ pub struct NormalColor {
 impl Material for NormalColor {
     fn get_color(&self, _: &Ray, normal: &Ray, _: &Scene, _: i32) -> RGB {
         RGB{
-            r: (normal.dir.x*255.0) as u8,
+            r: (255.0-normal.dir.x*255.0) as u8,
             g: (normal.dir.y*255.0) as u8,
             b: (normal.dir.z*255.0) as u8,
         }
