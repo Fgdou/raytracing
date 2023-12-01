@@ -21,15 +21,15 @@ fn main() {
     let mut image = Image::new(size, size);
 
     let mut scene = Scene::new(size as i32, size as i32);
-    scene.get_camera().pos = Vec3::new(0.0, 10.0, 0.0);
-    // scene.get_camera().rotation_x = -PI/8.0;
+    scene.get_camera().pos = Vec3::new(0.0, 4.0, 0.0);
+    // scene.get_camera().rotation_x = -0.1;
     scene.get_camera().rotation_y = -PI/8.0;
 
     for i in 0..5 {
         for j in 0..5 {
             let condition = i == 2 && j == 2 || i == 0 && j == 3;
 
-            let size = if condition {3.0} else {3.0};
+            let size = 1.0;
 
             let material: Box<dyn Material> = if condition {
                 Box::from(Mirror{})
@@ -40,9 +40,9 @@ fn main() {
             scene.add_object(Box::from(Sphere::new( 
                 size, 
                 Vec3::new(
-                    i as f32/5.0*100.0 + 50.0,
+                    i as f32/4.0*10.0 + 10.0,
                     size,
-                    j as f32/5.0*100.0 + 50.0,
+                    j as f32/4.0*10.0 + 10.0,
                 ),
                 material
             )));
@@ -52,6 +52,11 @@ fn main() {
         Vec3::zero(),
         Vec3::new(0.0, 1.0, 0.0),
         Box::from(Color{rgb: RGB::new(255, 255, 255)})
+    )));
+    scene.add_object(Box::from(Plane::new(
+        Vec3::new(20.0, 2.0, 20.0),
+        Vec3::new(-1.0, -PI/4.0, -1.0),
+        Box::new(Mirror{})
     )));
 
     scene.draw(&mut image);

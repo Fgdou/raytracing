@@ -46,8 +46,9 @@ impl Scene {
                     let rgb = object.get_material().get_color(&ray, &c, self, n+1);
 
                     let distance = (ray.pos - c.pos).abs2();
+                    let dir = ray.dir.dot(c.dir);
 
-                    if distance > 0.1 && distance < color.distance {
+                    if dir < 0.0 && distance > 0.1 && distance < color.distance {
                         color = RGBD{rgb: rgb, distance: distance};
                     }
                 },
@@ -72,7 +73,7 @@ impl Scene {
                 for _ in 0..self.camera.antialiasing {
                     let ray = self.camera.get_ray(x, y);
 
-                    let delta = 0.1;
+                    let delta = 0.02;
 
                     let ray = Ray{
                         pos: ray.pos + Vec3::new(random::<f32>()*delta, random::<f32>()*delta, random::<f32>()*delta),
