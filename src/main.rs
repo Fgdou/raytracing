@@ -6,12 +6,14 @@ mod camera;
 mod ray;
 mod objects;
 mod scene;
+mod materials;
 
 use std::f32::consts::PI;
 
 use image::{Image, ImageType, RGB};
+use materials::{mirror::Mirror, color::{NormalColor, Color}, Material};
 use objects::{sphere::Sphere, plane::Plane};
-use scene::{Scene, Material};
+use scene::Scene;
 use vec::Vec3;
 
 fn main() {
@@ -29,30 +31,27 @@ fn main() {
 
             let size = if condition {3.0} else {3.0};
 
-            let material = if condition {
-                Material::Mirror
+            let material: Box<dyn Material> = if condition {
+                Box::from(Mirror{})
             } else {
-                Material::Color(RGB{
-                    r: (i*255/5) as u8,
-                    g: (j*255/5) as u8,
-                    b: ((i+j)*255/10) as u8,
-                })
+                Box::from(NormalColor{})
             };
 
-            scene.add_object(Box::from(Sphere::new(material, 
+            scene.add_object(Box::from(Sphere::new( 
                 size, 
                 Vec3::new(
                     i as f32/5.0*100.0 + 50.0,
                     size,
                     j as f32/5.0*100.0 + 50.0,
-                )
+                ),
+                material
             )));
         }
     }
     scene.add_object(Box::from(Plane::new(
         Vec3::zero(),
         Vec3::new(0.0, 1.0, 0.0),
-        RGB::new(255, 255, 255)
+        Box::from(Color{rgb: RGB::new(255, 255, 255)})
     )));
 
     scene.draw(&mut image);

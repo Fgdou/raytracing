@@ -1,21 +1,16 @@
 use indicatif::ProgressBar;
 use rand::random;
 
-use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, vec::Vec3};
-
-pub enum Material {
-    Color(RGB),
-    Mirror,
-}
+use crate::{camera::Camera, image::{Image, RGB}, ray::Ray, vec::Vec3, materials::Material};
 
 pub struct RGBD {
     pub rgb: RGB,
     pub distance: f32
 }
 
-pub trait ObjectRay {
-    fn bonce(&self, ray: &Ray, scene: &Scene, bounce: i32) -> Option<RGBD>;
-    fn intersect(&self, ray: &Ray) -> Option<Vec3>;
+pub trait ObjectRay<'a> {
+    fn intersect(&self, ray: &Ray) -> Option<Ray>;
+    fn get_material(&self) -> &'a dyn Material;
 }
 
 pub struct Scene {
@@ -46,9 +41,13 @@ impl Scene {
         }
 
         for object in &self.objects {
-            match object.bonce(&ray, self, n+1){
+            match object.intersect(&ray){
                 Some(c) => {
-                    if c.distance > 0.1 && c.distance < color.distance {
+                    let rgb = object.get_material().get_color(&ray, c.clone(), scene, bounce);
+
+                    let distance = (ray.pos - c.pos).abs2();
+
+                    if distance > 0.1 && distance < color.distance {
                         color = c;
                     }
                 },

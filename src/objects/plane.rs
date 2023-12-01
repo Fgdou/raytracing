@@ -1,27 +1,21 @@
-use crate::{vec::Vec3, scene::{ObjectRay, RGBD, Scene}, ray::Ray, image::RGB};
+use crate::{vec::Vec3, scene::ObjectRay, ray::Ray, image::RGB, materials::Material};
 
 pub struct Plane {
     pos: Vec3,
     dir: Vec3,
-    color: RGB,
+    material: Box<dyn Material>
 }
 
 impl Plane{
-    pub fn new(pos: Vec3, dir: Vec3, color: RGB) -> Self {
+    pub fn new(pos: Vec3, dir: Vec3, material: Box<dyn Material>) -> Self {
         Self {
-            pos, dir: dir.normalized(), color
+            pos, dir: dir.normalized(), material
         }
     }
 }
 
-impl ObjectRay for Plane {
-    fn bonce(&self, ray: &Ray, scene: &Scene, bounce: i32) -> Option<RGBD> {
-        let point = self.intersect(ray)?;
-        let distance = (point - ray.pos).abs();
-        Some(RGBD{rgb: self.color.clone(), distance})
-    }
-
-    fn intersect(&self, ray: &Ray) -> Option<Vec3> {
+impl<'a> ObjectRay<'a> for Plane {
+    fn intersect(&self, ray: &Ray) -> Option<Ray> {
         // https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
         let n = self.dir;
         let p0 = self.pos;
@@ -35,7 +29,16 @@ impl ObjectRay for Plane {
             None
         } else {
             let d = (p0-l0).dot(n)/denom;
-            Some(l0+d*l)
+            let point = l0+d*l;
+
+            Some(Ray {
+                pos: point,
+                dir: self.dir
+            })
         }
+    }
+
+    fn get_material(&self) -> &'a dyn Material {
+        self.material.as_ref()
     }
 }
