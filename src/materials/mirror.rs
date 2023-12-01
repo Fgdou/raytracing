@@ -1,4 +1,4 @@
-use crate::{ray::Ray, vec::Vec3, scene::Scene, image::RGB};
+use crate::{ray::Ray, scene::Scene, image::RGB};
 
 use super::Material;
 

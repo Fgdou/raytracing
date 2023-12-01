@@ -1,4 +1,4 @@
-use crate::{vec::Vec3, scene::ObjectRay, ray::Ray, image::RGB, materials::Material};
+use crate::{vec::Vec3, scene::ObjectRay, ray::Ray, materials::Material};
 
 pub struct Plane {
     pos: Vec3,
@@ -14,7 +14,7 @@ impl Plane{
     }
 }
 
-impl<'a> ObjectRay<'a> for Plane {
+impl ObjectRay for Plane {
     fn intersect(&self, ray: &Ray) -> Option<Ray> {
         // https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
         let n = self.dir;
@@ -38,7 +38,7 @@ impl<'a> ObjectRay<'a> for Plane {
         }
     }
 
-    fn get_material(&self) -> &'a dyn Material {
+    fn get_material(&self) -> &dyn Material {
         self.material.as_ref()
     }
 }

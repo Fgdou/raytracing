@@ -8,9 +8,9 @@ pub struct RGBD {
     pub distance: f32
 }
 
-pub trait ObjectRay<'a> {
+pub trait ObjectRay {
     fn intersect(&self, ray: &Ray) -> Option<Ray>;
-    fn get_material(&self) -> &'a dyn Material;
+    fn get_material(&self) -> &dyn Material;
 }
 
 pub struct Scene {
@@ -43,12 +43,12 @@ impl Scene {
         for object in &self.objects {
             match object.intersect(&ray){
                 Some(c) => {
-                    let rgb = object.get_material().get_color(&ray, c.clone(), scene, bounce);
+                    let rgb = object.get_material().get_color(&ray, &c, self, n+1);
 
                     let distance = (ray.pos - c.pos).abs2();
 
                     if distance > 0.1 && distance < color.distance {
-                        color = c;
+                        color = RGBD{rgb: rgb, distance: distance};
                     }
                 },
                 _ => ()

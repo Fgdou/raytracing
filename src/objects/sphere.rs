@@ -1,4 +1,4 @@
-use crate::{scene::{ObjectRay, RGBD, Scene}, vec::Vec3, ray::Ray, image::RGB, materials::Material};
+use crate::{scene::ObjectRay, ray::Ray, materials::Material, vec::Vec3};
 
 pub struct Sphere {
     size: f32,
@@ -6,7 +6,7 @@ pub struct Sphere {
     material: Box<dyn Material>,
 }
 
-impl<'a> ObjectRay<'a> for Sphere {
+impl ObjectRay for Sphere {
     fn intersect(&self, ray: &Ray) -> Option<Ray> {
         // https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
 
@@ -38,7 +38,7 @@ impl<'a> ObjectRay<'a> for Sphere {
         }
     }
 
-    fn get_material(&self) -> &'a dyn Material {
+    fn get_material(&self) -> &dyn Material {
         self.material.as_ref()
     }
 }
