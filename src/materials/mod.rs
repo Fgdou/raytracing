@@ -2,6 +2,7 @@ use cgmath::InnerSpace;
 
 use crate::{image::RGB, ray::Ray, scene::Scene};
 
+#[derive(Clone)]
 pub enum Material {
     Color(RGB),
     Normal,
