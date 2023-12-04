@@ -34,16 +34,21 @@ fn main() {
         }
     }
 
-    scene.add_object(Box::new(Sphere::new(
-        5.0,
-        Vector3::new(30.0, 6.0, 30.0),
-        Material::Mirror
-    )));
+    // scene.add_object(Box::new(Sphere::new(
+    //     5.0,
+    //     Vector3::new(30.0, 6.0, 30.0),
+    //     Material::Mirror
+    // )));
     
     scene.add_object(Box::from(Plane::new(
         Vector3::zero(),
         Vector3::new(0.0, 1.0, 0.0),
         Material::Color(image::RGB { r: 255, g: 255, b: 255 })
+    )));
+    scene.add_object(Box::from(Sphere::new(
+        2.0,
+        Vector3::new(20.0, 3.0, 20.0),
+        Material::Glass
     )));
 
     scene.draw(&mut image);

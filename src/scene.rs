@@ -43,7 +43,7 @@ impl Scene {
         for object in &self.objects {
             match object.intersect(&ray){
                 Some(c) => {
-                    let rgb = object.get_material().get_color(&ray, &c, self, n+1);
+                    let rgb = object.get_material().get_color(&ray, &c, self, n+1, object);
 
                     let distance = (ray.pos - c.pos).magnitude();
                     let dir = ray.dir.dot(c.dir);

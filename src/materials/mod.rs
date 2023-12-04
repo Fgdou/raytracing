@@ -1,15 +1,28 @@
-use cgmath::InnerSpace;
+use cgmath::{InnerSpace, Matrix3, Rad, Vector3};
 
-use crate::{image::RGB, ray::Ray, scene::Scene};
+use crate::{image::RGB, ray::Ray, scene::{Scene, ObjectRay}};
+
+const REFRACTIVE_INDEX: f32 = 1.5168;
 
 pub enum Material {
     Color(RGB),
     Normal,
-    Mirror
+    Mirror,
+    Glass
 }
 
+fn move_ray_refraction(ray: &Vector3<f32>, normal: &Vector3<f32>, n1: f32, n2: f32) -> Vector3<f32> {
+    let angle1 = (-*normal).angle(*ray).0;
+
+    let angle2 = (angle1.sin()*n1/n2).asin();
+    
+    let axis = -normal.cross(*ray);
+    let rotation = Matrix3::from_axis_angle(axis.normalize(), Rad(angle2));
+
+    (rotation*normal).normalize()
+}
 impl Material {
-    pub fn get_color(&self, ray: &Ray, normal: &Ray, scene: &Scene, bounce: i32) -> RGB {
+    pub fn get_color(&self, ray: &Ray, normal: &Ray, scene: &Scene, bounce: i32, object: &Box<dyn ObjectRay>) -> RGB {
         match self {
             Material::Color(c) => c.clone(),
             Material::Normal => RGB{
@@ -38,6 +51,21 @@ impl Material {
                 
                 res.rgb
             },
+            Material::Glass => {
+                let ray_inside = move_ray_refraction(&ray.dir, &-normal.dir, 1.0, REFRACTIVE_INDEX);
+
+                let ray_inter = Ray { pos: ray.pos, dir: ray_inside };
+
+                let ray_outside = match object.intersect(&ray_inter){
+                    None => ray_inter,
+                    Some(r) => Ray{
+                        dir: move_ray_refraction(&ray_inter.dir, &normal.dir, REFRACTIVE_INDEX, 1.0),
+                        pos: r.pos,
+                    }
+                };
+
+                scene.launch_ray(ray_outside, bounce).rgb
+            }
         }
     }
 }
