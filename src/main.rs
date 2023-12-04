@@ -8,9 +8,9 @@ mod scene;
 mod materials;
 
 use cgmath::{Vector3, Zero};
-use image::{Image, ImageType};
+use image::{Image, ImageType, RGB};
 use materials::Material;
-use objects::{sphere::Sphere, plane::Plane};
+use objects::{sphere::Sphere, plane::Plane, triangle::Triangle};
 use scene::Scene;
 
 fn main() {
@@ -34,11 +34,11 @@ fn main() {
         }
     }
 
-    scene.add_object(Box::new(Sphere::new(
-        5.0,
-        Vector3::new(30.0, 6.0, 30.0),
-        Material::Mirror
-    )));
+    scene.add_object(Box::new(Triangle::new([
+        Vector3::new(20.0, 1.0, 10.0),
+        Vector3::new(10.0, 10.0, 10.0),
+        Vector3::new(20.0, 10.0, 20.0),
+    ], Material::Mirror)));
     
     scene.add_object(Box::from(Plane::new(
         Vector3::zero(),
