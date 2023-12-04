@@ -9,7 +9,7 @@ mod materials;
 
 use cgmath::{Vector3, Zero};
 use image::{Image, ImageType};
-use materials::{color::{NormalColor, Color}, mirror::Mirror};
+use materials::Material;
 use objects::{sphere::Sphere, plane::Plane};
 use scene::Scene;
 
@@ -27,10 +27,9 @@ fn main() {
             let x = j as f32*2.0 + 10.0;
 
             let size = 1.0;
-            let color = NormalColor{};
 
             scene.add_object(Box::new(Sphere::new(
-                size, Vector3::new(x, 1.0, z), Box::new(color)
+                size, Vector3::new(x, 1.0, z), Material::Normal
             )));
         }
     }
@@ -38,13 +37,13 @@ fn main() {
     scene.add_object(Box::new(Sphere::new(
         5.0,
         Vector3::new(30.0, 6.0, 30.0),
-        Box::new(Mirror{})
+        Material::Mirror
     )));
     
     scene.add_object(Box::from(Plane::new(
         Vector3::zero(),
         Vector3::new(0.0, 1.0, 0.0),
-        Box::from(Color{rgb: image::RGB { r: 255, g: 255, b: 255 }})
+        Material::Color(image::RGB { r: 255, g: 255, b: 255 })
     )));
 
     scene.draw(&mut image);

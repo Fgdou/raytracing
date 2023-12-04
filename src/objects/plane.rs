@@ -5,11 +5,11 @@ use crate::{scene::ObjectRay, ray::Ray, materials::Material};
 pub struct Plane {
     pos: Vector3<f32>,
     dir: Vector3<f32>,
-    material: Box<dyn Material>
+    material: Material
 }
 
 impl Plane{
-    pub fn new(pos: Vector3<f32>, dir: Vector3<f32>, material: Box<dyn Material>) -> Self {
+    pub fn new(pos: Vector3<f32>, dir: Vector3<f32>, material: Material) -> Self {
         Self {
             pos, dir: dir.normalize(), material
         }
@@ -40,7 +40,7 @@ impl ObjectRay for Plane {
         }
     }
 
-    fn get_material(&self) -> &dyn Material {
-        self.material.as_ref()
+    fn get_material(&self) -> &Material {
+        &self.material
     }
 }
