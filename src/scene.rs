@@ -10,7 +10,7 @@ pub struct RGBD {
 
 pub trait ObjectRay {
     fn intersect(&self, ray: &Ray) -> Option<Ray>;
-    fn get_material(&self) -> &dyn Material;
+    fn get_material(&self) -> &Material;
 }
 
 pub struct Scene {

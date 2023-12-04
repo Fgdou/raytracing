@@ -5,7 +5,7 @@ use crate::{scene::ObjectRay, ray::Ray, materials::Material};
 pub struct Sphere {
     size: f32,
     pos: Vector3<f32>,
-    material: Box<dyn Material>,
+    material: Material,
 }
 
 impl ObjectRay for Sphere {
@@ -40,13 +40,13 @@ impl ObjectRay for Sphere {
         }
     }
 
-    fn get_material(&self) -> &dyn Material {
-        self.material.as_ref()
+    fn get_material(&self) -> &Material {
+        &self.material
     }
 }
 
 impl Sphere {
-    pub fn new(size: f32, pos: Vector3<f32>, material: Box<dyn Material>) -> Self {
+    pub fn new(size: f32, pos: Vector3<f32>, material: Material) -> Self {
         Self {
             size, pos, material
         }
